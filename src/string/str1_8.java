@@ -4,18 +4,20 @@ import java.util.Scanner;
 
 public class str1_8 {
     public static String solution(String str) {
-        StringBuilder test = new StringBuilder();
+        StringBuilder test1 = new StringBuilder();
+        StringBuilder test2 = new StringBuilder();
 
         for (char a : str.toCharArray()) {
             if (Character.isLetter(a)) {
-                test.append(a);
+                test1.append(a);
+                test2.append(a);
             }
         }
 
-        String reversedStr = test.reverse().
+        String reversedStr = test2.reverse().
                 toString().toLowerCase();
 
-        String originStr = test.toString().toLowerCase();
+        String originStr = test1.toString().toLowerCase();
 
         if (reversedStr.equals(originStr)) {
             return "YES";

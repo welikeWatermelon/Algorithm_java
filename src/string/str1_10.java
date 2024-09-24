@@ -12,26 +12,25 @@ public class str1_10 {
         //거리 최소 (답)
         List<Integer> min = new ArrayList<>();
 
-        //t가 있는 인덱스
+        //t가 있는 인덱스 (해당 문자가 있는 인덱스)
         List<Integer> indices = new ArrayList<>();
 
         //1. t들의 위치를 모두 찾는다 (인덱스로) (ex. t가 3개)
-        //2. 각 위치에서 t들의 인덱스를 뺀다 (3개의 결과가 나옴)
-        //3. 그 중 minimum 구한다 (3개의 결과중 가장 작은거. 0보다 큰거)
-        //4. 1~3을 문자열 반복
-        
         for (int i = 0; i < str.length(); i++) {
             if(str.charAt(i) == t)
                 indices.add(i);
         }
-
+        //4. 1~3을 문자열 반복
         for (int i = 0; i < str.length(); i++) {
             int minDis = 1000;
+            //2. 각 위치에서 t들의 인덱스를 뺀다 (3개의 결과가 나옴)
+            //3. 그 중 minDis 구한다 (3개의 결과중 가장 작은거. 0보다 큰거)
             for (Integer index : indices) {
                 if (Math.abs(i - index) < minDis) {
                     minDis = Math.abs(i - index);
                 }
             }
+            //min의 정답 리스트에 추가
             min.add(minDis);
         }
         for (Integer i : min) {
