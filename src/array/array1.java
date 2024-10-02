@@ -1,8 +1,8 @@
-package src.Array;
+package src.array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Array1 {
+public class array1 {
     public ArrayList<Integer> solution(int n, int[] arr) {
         ArrayList<Integer> answer = new ArrayList<>();
         answer.add(arr[0]);
@@ -14,7 +14,7 @@ public class Array1 {
         return answer;
     }
     public static void main(String[] args) {
-        Array1 T = new Array1();
+        array1 T = new array1();
         Scanner kb = new Scanner(System.in);
         int n = kb.nextInt();
         int[] arr = new int[n];
