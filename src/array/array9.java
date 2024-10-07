@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class array9 {
     public static int solution(int n, int[][] arr) {
         int sum;
-        int max = 0;
+        int max = Integer.MIN_VALUE;
         for (int i = 0; i < n; i++) {
             sum = 0;
             for (int j = 0; j < n; j++) {
