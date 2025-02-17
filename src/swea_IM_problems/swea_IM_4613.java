@@ -31,8 +31,7 @@ public class swea_IM_4613 {
             // K~@@ 까지 블루
             // @@~M 까지 레드
             int min = Integer.MAX_VALUE;
-            int last = N-2;
-            for (int K = 1; K <= N-1; K++) {
+            for (int K = 1; K < N-1; K++) {
                 int cnt = 0;
                 //White
                 for (int i = 0; i < K; i++) {
@@ -42,7 +41,7 @@ public class swea_IM_4613 {
                 }
 
 
-
+                int last = N-2;
                 while(last>=K){
                     //Blue
                     int tmpCnt  = 0;
@@ -67,7 +66,7 @@ public class swea_IM_4613 {
 
                 }
             }
-            System.out.printf("#%d %d",t,min);
+            System.out.printf("#%d %d\n",t,min);
         }
     }
 }
