@@ -1,7 +1,6 @@
 package swea_IM_problems;
 
 import java.util.Scanner;
-
 public class swea_IM_4613 {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
