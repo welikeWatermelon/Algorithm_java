@@ -1,6 +1,7 @@
 package swea_0219;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class swea_5108 {
@@ -25,7 +26,7 @@ public class swea_5108 {
                 arr.add(addIdx, addNum);
             }
 
-            System.out.printf("#%d %d\n",t,arr.get(L));
+            System.out.printf("#%d %d\n", t, arr.get(L));
 
         }
     }
