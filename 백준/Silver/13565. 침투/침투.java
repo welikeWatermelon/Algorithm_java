@@ -28,18 +28,14 @@ public class Main {
             }
         }
 
-        int flag = 0;
         for (int i = 0; i < M; i++) {
             if (checked[N - 1][i]) {
                 System.out.println("YES");
-                flag = 1;
-                break;
+                return;
             }
         }
-
-        if (flag == 0) {
-            System.out.println("NO");
-        }
+        
+        System.out.println("NO");
 
 
     }
@@ -49,7 +45,6 @@ public class Main {
     // 기저조건이 필요 없는 이유는
     // 조건에 만족하지 않으면 알아서 DFS로 빠지지 않고, 끝까지 나와서 종료될 것이기 때문
     public static void DFS(int x, int y) {
-
         for (int i = 0; i < 4; i++) {
             int nx = x + dx[i];
             int ny = y + dy[i];
