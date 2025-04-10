@@ -21,20 +21,26 @@ public class Main {
         long answer = 0;
 
         while (left <= right) {
-            long mid = (left + right) / 2;
-            long count = 0;
+    long mid = (left + right) / 2;
+    long count = 0;
+    boolean over = false;
 
-            for (int i = 0; i < K; i++) {
-                count += arr[i] / mid;
-            }
-
-            if (count >= N) {
-                answer = mid; // 가능한 길이 저장
-                left = mid + 1; // 더 긴 길이도 가능할 수 있음
-            } else {
-                right = mid - 1;
-            }
+    for (int i = 0; i < K; i++) {
+        count += arr[i] / mid;
+        if (count >= N) { // 이때는 답이 될 수 있으므로 break만!
+            over = true;
+            break;
         }
+    }
+
+    if (over) {
+        answer = mid;     // 이 경우 정답 가능성 있음!!
+        left = mid + 1;   // 더 긴 길이 탐색
+    } else {
+        right = mid - 1;
+    }
+}
+
 
         System.out.println(answer);
     }
