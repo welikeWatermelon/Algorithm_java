@@ -4,69 +4,68 @@ import java.util.Queue;
 import java.util.Scanner;
 
 public class Main {
+
+    public static int N;
+    public static int M;
+
     public static int[][] arr;
-    public static int N,M;
+    public static boolean[][] visited;
+
     public static int[] dx = {-1, 1, 0, 0};
     public static int[] dy = {0, 0, -1, 1};
-//    public static ArrayList<int[]> isOne;
-    // 1이 있는 배열을 넘겨주고, 모두 queue에 넣자
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        M = sc.nextInt(); // 열
-        N = sc.nextInt(); // 행
-        int startX=0;
-        int startY=0;
+        M = sc.nextInt();
+        N = sc.nextInt();
+
         arr = new int[N][M];
-        ArrayList<int[]> isOne = new ArrayList<>();
+        visited = new boolean[N][M];
+
+        ArrayList<int[]> finishTomato = new ArrayList<>();
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
-                arr[i][j] = sc.nextInt();
-                if (arr[i][j] == 1) {
-                    isOne.add(new int[]{i, j,0});
+                int tomato = sc.nextInt();
+                arr[i][j] = tomato;
+                if (tomato == 1) {
+                    finishTomato.add(new int[]{i, j,0});
+                    visited[i][j] = true;
                 }
             }
         }
-        int answer = BFS(isOne);
-        if (isThereZero()) {
-            System.out.println(-1);
-        } else {
-            System.out.println(answer);
-        }
 
-    }
+        int cnt = bfs(finishTomato);
 
-    public static int BFS(ArrayList<int[]> isOne) {
-        Queue<int[]> q = new LinkedList<>();
-        for (int[] tmpArr : isOne) {
-            q.add(tmpArr);
-        }
-
-        int answer=-1;
-        while (!q.isEmpty()) {
-            int[] tmp = q.poll();
-            int cnt = tmp[2];
-            answer = cnt;
-            for (int i = 0; i < 4; i++) {
-                int nx = tmp[0] + dx[i];
-                int ny = tmp[1] + dy[i];
-                if (nx >= 0 && ny >= 0 && nx < N && ny < M && arr[nx][ny] == 0) {
-                    arr[nx][ny] = 1;
-                    q.add(new int[]{nx, ny, cnt + 1});
-                }
-            }
-
-        }
-        return answer;
-    }
-
-    public static boolean isThereZero() {
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
                 if (arr[i][j] == 0) {
-                    return true;
+                    System.out.println(-1);
+                    return;
                 }
             }
         }
-        return false;
+        System.out.println(cnt);
+    }
+
+    public static int bfs(ArrayList<int[]> finishTomato){
+        Queue<int[]> q = new LinkedList<>();
+        q.addAll(finishTomato);
+
+        int cnt = 0;
+
+        while (!q.isEmpty()) {
+            int[] nowTomato = q.poll();
+            for (int i = 0; i < 4; i++) {
+                int nx = nowTomato[0] + dx[i];
+                int ny = nowTomato[1] + dy[i];
+                if (nx >= 0 && ny >= 0 && nx < N && ny < M && arr[nx][ny] == 0 && !visited[nx][ny]) {
+                    visited[nx][ny] = true;
+                    arr[nx][ny] = 1;
+                    cnt = nowTomato[2] + 1;
+                    q.add(new int[]{nx, ny, cnt});
+                }
+            }
+        }
+        return cnt;
     }
 }
