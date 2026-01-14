@@ -1,131 +1,90 @@
 import java.util.*;
 
-public class Main {
-    public static class Node implements Comparable<Node>{
-        int to;
-        int weight;
+class NodeB implements Comparable<NodeB> {
+    int idx;
+    int dist;
 
-        public Node(int to, int weight) {
-            this.to = to;
-            this.weight = weight;
-        }
-
-        @Override
-        public int compareTo(Node o) {
-            return Integer.compare(this.weight, o.weight);
-        }
+    NodeB(int idx, int dist) {
+        this.idx = idx;
+        this.dist = dist;
     }
 
-    static List<Node>[] graph;
-    static int INF = 987654321;
-    static int[] dist;
-    static int[] distP1;
-    static int[] distP2;
-    static int V;
+    @Override
+    public int compareTo(NodeB other) {
+        return Integer.compare(this.dist, other.dist);
+    }
+}
+
+public class Main {
+    public static int N;
+    public static int E;
+    public static List<List<NodeB>> graph = new ArrayList<>();
+    public static int INF = 100000000;
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        V = sc.nextInt();
-        int E = sc.nextInt();
 
-        // 그래프 초기화 생성
-        graph = new ArrayList[V + 1];
+        N = sc.nextInt();
+        E = sc.nextInt();
 
-        for (int i = 0; i <= V; i++) {
-            graph[i] = new ArrayList<>();
+
+        for (int i = 0; i <= N; i++) {
+            graph.add(new ArrayList<>());
         }
 
-        dist = new int[V + 1];
-        distP1 = new int[V + 1];
-        distP2 = new int[V + 1];
-
-
-        // 그래프 설정
         for (int i = 0; i < E; i++) {
-            int from = sc.nextInt();
-            int to = sc.nextInt();
-            int weight = sc.nextInt();
-            graph[from].add(new Node(to, weight));
-            graph[to].add(new Node(from, weight));
+            int u = sc.nextInt();
+            int v = sc.nextInt();
+            int c = sc.nextInt();
 
+            graph.get(u).add(new NodeB(v, c));
+            graph.get(v).add(new NodeB(u, c));
         }
 
-        int p1 = sc.nextInt();
-        int p2 = sc.nextInt();
+        int v1 = sc.nextInt();
+        int v2 = sc.nextInt();
 
-        int[] from1 = dijkstra(1);     // 1에서 출발한 거리 배열
-        int[] fromP1 = dijkstra(p1);   // p1에서 출발한 거리 배열
-        int[] fromP2 = dijkstra(p2);   // p2에서 출발한 거리 배열
+        int[] dist1 = dijkstra(1);
+        int[] dist2 = dijkstra(v1);
+        int[] dist3 = dijkstra(v2);
 
+        long answer1 = dist1[v1] + dist2[v2] + dist3[N];
+        long answer2 = dist1[v2] + dist3[v1] + dist2[N];
 
-        int d1 = from1[p1];
-        int d2 = from1[p2];
-        int p1p2 = fromP1[p2];
-        int p1N = fromP1[V];
-        int p2p1 = fromP2[p1];
-        int p2N = fromP2[V];
+        long finalResult = Long.min(answer1, answer2);
 
-        int total1 = d1 + p1p2 + p2N;
-        int total2 = d2 + p2p1 + p1N;
+        if (finalResult >= INF) {
+            System.out.println(-1);
+        } else {
+            System.out.println(finalResult);
+        }
 
-        if (d1 >= INF || p1p2 >= INF || p2N >= INF) total1 = INF;
-        if (d2 >= INF || p2p1 >= INF || p1N >= INF) total2 = INF;
-
-        int answer = Math.min(total1, total2);
-        System.out.println(answer >= INF ? -1 : answer);
     }
 
+
     public static int[] dijkstra(int start) {
-        int[] dist = new int[V + 1];
+        int[] dist = new int[N + 1];
         Arrays.fill(dist, INF);
+
+        PriorityQueue<NodeB> pq = new PriorityQueue<>();
+        pq.add(new NodeB(start, 0));
         dist[start] = 0;
 
-        PriorityQueue<Node> pq = new PriorityQueue<>();
-        pq.add(new Node(start, 0));
-
         while (!pq.isEmpty()) {
-            Node cur = pq.poll();
-            int now = cur.to;
+            NodeB nowNode = pq.poll();
 
-            if (cur.weight > dist[now]) continue;
+            if (dist[nowNode.idx] < nowNode.dist) {
+                continue;
+            }
 
-            for (Node next : graph[now]) {
-                if (dist[next.to] > dist[now] + next.weight) {
-                    dist[next.to] = dist[now] + next.weight;
-                    pq.add(new Node(next.to, dist[next.to]));
+            for (NodeB neighbor : graph.get(nowNode.idx)) {
+                if (dist[neighbor.idx] > dist[nowNode.idx] + neighbor.dist) {
+                    dist[neighbor.idx] = dist[nowNode.idx] + neighbor.dist;
+                    pq.add(new NodeB(neighbor.idx, dist[neighbor.idx]));
                 }
             }
         }
 
-        return dist; // 이게 핵심! 거리 배열을 리턴!
+        return dist;
     }
-
 }
-
-// 1번 정점에서 N번 정점으로 최단 거리로 이동해야함
-// 주어진 임의의 2개의 정점(p1, p2)을 통과해야함
-
-// 총 두가지 경우의 수를 구해야함
-
-// <1>
-// p1 까지 가는 거리
-// p1에서 다시 다익스트라
-// p1 -> p2
-// p2에서 N까지 가는 다익스트라
-
-// <2>
-// p2 까지 가는 거리
-// p2에서 다시 다익스트라
-// p2 -> p1
-// p1에서 N까지 가는 다익스트라
-
-// <1>과 <2>의 거리를 비교하여 최솟값으로 해야함
-
-
-// 1. 1에서의 다익스트라를 구함
-// 2. p1까지의 거리 d1, p2까지의 거리 d2 를 각각 구함
-// 3. p1에서의 다익스트라를 구한 뒤, p2까지의 거리를 구함 (p1p2)
-// 4. p2에서 다익스트라를 구한 뒤, N까지의 거리를 구함  (p2N)
-// 5. p2에서의 다익스트라를 구한 뒤, p1까지의 거리를 구함 (p2p1)
-// 6. p1에서 다익스트라를 구한 뒤, N까지의 거리를 구함 (p1N)
-
-// Math.min(d1+p1p2+p2N,d2+p2p1+p1N) 하면됨
