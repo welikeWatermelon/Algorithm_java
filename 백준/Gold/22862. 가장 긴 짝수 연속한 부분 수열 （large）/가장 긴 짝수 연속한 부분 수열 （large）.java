@@ -1,7 +1,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -10,57 +9,43 @@ public class Main {
         StringTokenizer st;
 
         st = new StringTokenizer(br.readLine());
-        int N = Integer.parseInt(st.nextToken());
-        int K = Integer.parseInt(st.nextToken()); // S에서 원하는 위치에 있는 수를 골라 최대 K번 삭제 가능
-        int[] S = new int[N];
-        ArrayList<Integer> odd = new ArrayList<>(); // 홀수의 인덱스가 들어있음
-
-        int oddCnt = 0;
-        int evenCnt = 0;
+        int N = Integer.parseInt(st.nextToken()); // 수열 길이
+        int K = Integer.parseInt(st.nextToken()); // 최대 횟수
+        int[] arr = new int[N];
 
         st = new StringTokenizer(br.readLine());
+
         for (int i = 0; i < N; i++) {
-            int num = Integer.parseInt(st.nextToken());
-            S[i] = num;
-        }
-        int i=0, j = 1;
-        if (N == 1) {
-            System.out.println(S[i] % 2 == 0 ? 1 : 0);
-            return;
+            arr[i] = Integer.parseInt(st.nextToken());
         }
 
-        if (S[i] % 2 == 0) {
-            evenCnt++;
-        } else {
-            oddCnt++;
-        }
+        int i = 0;
+        int j = 0;
+        int oddCnt = 0;
+        int evenCnt = 0;
+        int maxEvenCnt = 0;
 
-        int maxEven = evenCnt;
-
-        while(i<j){
-            if (oddCnt > K) {
-                if (S[i] % 2 == 0) {
+        while (j < N) {
+            if (oddCnt == K+1) {
+                if (arr[i] % 2 == 0) {
                     evenCnt--;
+                    i++;
                 } else {
                     oddCnt--;
+                    i++;
                 }
-                i++;
-
             }else{
-                if (j >= N) {
-                    break;
-                }
-                if (S[j] % 2 == 0) {
+                if (arr[j] % 2 == 0) {
                     evenCnt++;
-                    maxEven = Math.max(maxEven, evenCnt);
+                    j++;
                 } else {
                     oddCnt++;
+                    j++;
                 }
-                j++;
             }
+            maxEvenCnt = Math.max(maxEvenCnt, evenCnt);
         }
 
-        System.out.println(maxEven);
-
+        System.out.println(maxEvenCnt);
     }
 }
