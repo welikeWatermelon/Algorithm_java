@@ -1,40 +1,29 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.PriorityQueue;
+import java.util.StringTokenizer;
 
 public class Main {
-
-    // 방향성이 없는 그래프가 주어진다.
-    // 1번 정점에서 N번 정점으로 최단 거리로 이동하려고 한다.
-    // 조건 1. 최단 경로
-    // 조건 2. 임의로 주어진 두 정점은 반드시 통과
-    // 한번 이동했던 정점은 물론, 한번 이동했던 간선도 다시 이동할 수 있다.
-    // 하지만 반드시 최단 경로로 이동해야 한다
-
-
-    // 아니면 v1 에서 다익스트라 하면 1번까지 가는거, v2까지 가는거 N까지 가는거 구함  (v1ToS, v1ToV2, v1ToE)
-    // v2에서 다익스트라하면 1번까지 가는거, v2까지 가는거, N까지 가는거 구함 (v2ToS, v2ToV1, v2ToE)
-    // 즉, v1과 v2에서 각각 다익스트라를 한번 씩 하면 됨
-
-
-    public static int INF = Integer.MAX_VALUE;
-    public static int[] v1Dist, v2Dist;
     public static int N;
+    public static int E;
     public static ArrayList<Node>[] graph;
-
+    public static int INF = 200000000;
 
     public static class Node implements Comparable<Node>{
-        int idx,cost;
+        int idx;
+        int dist;
 
-        public Node(int idx, int cost) {
+        public Node(int idx, int dist) {
             this.idx = idx;
-            this.cost = cost;
+            this.dist = dist;
         }
 
         @Override
         public int compareTo(Node o) {
-            return this.cost - o.cost;
+            return this.dist - o.dist;
         }
     }
 
@@ -44,78 +33,80 @@ public class Main {
 
         st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
-        int E = Integer.parseInt(st.nextToken());
+        E = Integer.parseInt(st.nextToken());
 
-        graph = new ArrayList[N + 1];
-        v1Dist = new int[N + 1];
-        v2Dist = new int[N + 1];
+        graph = new ArrayList[N+1];
 
-        Arrays.fill(v1Dist, INF);
-        Arrays.fill(v2Dist, INF);
+        int[] distU = new int[N + 1];
+        int[] distV = new int[N + 1];
 
+        // 그래프 설정
         for (int i = 0; i <= N; i++) {
             graph[i] = new ArrayList<>();
         }
 
-        for (int i = 0; i <E; i++) {
+        for (int i = 0; i < E; i++) {
             st = new StringTokenizer(br.readLine());
             int a = Integer.parseInt(st.nextToken());
             int b = Integer.parseInt(st.nextToken());
             int c = Integer.parseInt(st.nextToken());
+
             graph[a].add(new Node(b, c));
             graph[b].add(new Node(a, c));
         }
 
         st = new StringTokenizer(br.readLine());
-        int v1 = Integer.parseInt(st.nextToken());
-        int v2 = Integer.parseInt(st.nextToken());
+        int u = Integer.parseInt(st.nextToken());
+        int v = Integer.parseInt(st.nextToken());
 
-        dijk(v1, v1Dist);
-        dijk(v2, v2Dist);
+        Arrays.fill(distU, INF);
+        Arrays.fill(distV, INF);
 
-        int v1ToS = v1Dist[1];
-        int v1ToV2 = v1Dist[v2];
-        int v1ToE = v1Dist[N];
+        distU[u] = 0;
+        distV[v] = 0;
 
-        int v2ToS = v2Dist[1];
-        int v2ToE = v2Dist[N];
+        dijk(u, distU);
+        dijk(v, distV);
 
-        if (v1ToS == INF || v1ToV2 == INF || v1ToE == INF || v2ToS == INF || v2ToE == INF) {
+        int startU = distU[1];
+        int startV = distV[1];
+
+        int mid = distU[v];
+
+        int endV = distV[N];
+        int endU = distU[N];
+
+        int min = Math.min(startU + mid + endV, startV + mid + endU);
+        if (min >= INF) {
             System.out.println(-1);
-            return;
+        } else {
+            System.out.println(min);
         }
-
-        int min = Math.min(v1ToS + v1ToV2 + v2ToE, v2ToS + v1ToV2 + v1ToE);
-        System.out.println(min);
-
+        // 최대 200,000,000 -> 모든 간선을 더해도 2억이니까 int 가능이지 또한 INF를 안넘잖아
     }
 
     public static void dijk(int start, int[] dist) {
-        dist[start] = 0;
         PriorityQueue<Node> pq = new PriorityQueue<>();
         pq.add(new Node(start, 0));
-        while (!pq.isEmpty()) {
-            Node node = pq.poll();
-            int curIdx = node.idx;
-            int curCost = node.cost;
 
-            if (dist[curIdx] < curCost) {
+        while (!pq.isEmpty()) {
+            Node curNode = pq.poll();
+            int curIdx = curNode.idx;
+            int curDist = curNode.dist;
+
+            if (dist[curIdx] < curDist) {
                 continue;
             }
 
-            for (Node next : graph[curIdx]) {
-                int nextIdx = next.idx;
-                int nextCost = next.cost;
-
-                int newCost = curCost + nextCost;
-
-                if (dist[nextIdx] > newCost) {
-                    dist[nextIdx] = newCost;
-                    pq.add(new Node(nextIdx, newCost));
+            for (Node nextNode : graph[curIdx]) {
+                int nextIdx = nextNode.idx;
+                int nextDist = nextNode.dist;
+                if (dist[nextIdx] > curDist + nextDist) {
+                    dist[nextIdx] = curDist + nextDist;
+                    pq.add(new Node(nextIdx, curDist + nextDist));
                 }
+
             }
-
         }
-
     }
 }
