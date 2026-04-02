@@ -1,78 +1,64 @@
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.Scanner;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 public class Main {
-    public static int[] parent;
-    public static int[] countChild;
-    public static int F;
-    public static void main(String[] args) {
-        // 두 사람의 친구 네트워크에 몇 명이 있는지 구하는 프로그램을 작성
-        Scanner sc = new Scanner(System.in);
-        int T = sc.nextInt();
+    public static Map<String, String> network;
+    public static Map<String, Integer> size;
 
-        // 문자열로 들어오는 애를 어떻게 숫자로 분리할까
-        // key-value = 문자열-index 로 하자\
-        for (int t = 0; t < T; t++) {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
 
-            HashMap<String, Integer> hashMap = new HashMap<>();
-            int idx = 0;
+        int T = Integer.parseInt(br.readLine());
+        for (int i = 0; i < T; i++) {
+            int F = Integer.parseInt(br.readLine());
+            // Key-Value 로 하면 될듯 Key-이름 / Value - 주인
+            network = new HashMap<>();
+            size = new HashMap<>();
 
-            F = sc.nextInt();
-            parent = new int[2*F+1];
-            countChild = new int[2 * F + 1];
-            for (int i = 1; i <= 2 * F; i++) {
-                parent[i] = i;
-                countChild[i] = 1;
-            }
+            for (int f = 0; f < F; f++) {
+                st = new StringTokenizer(br.readLine());
+                String first = st.nextToken();
+                String second = st.nextToken();
 
-            for (int i = 1; i <= 2*F; i++) {
-                parent[i] = i;
-            }
-
-            for (int j = 0; j < F; j++) {
-                String firstName = sc.next();
-                String secondName = sc.next();
-
-                // 이름이 없으면 넣어줌
-                if (!hashMap.containsKey(firstName)) {
-                    idx++;
-                    hashMap.put(firstName, idx);
+                if (!network.containsKey(first)) {
+                    network.put(first, first);
+                    size.put(first, 1);
                 }
 
-                if (!hashMap.containsKey(secondName)) {
-                    idx++;
-                    hashMap.put(secondName, idx);
+                if (!network.containsKey(second)) {
+                    network.put(second, second);
+                    size.put(second, 1);
                 }
 
-                int firstIdx = hashMap.get(firstName);
-                int secondIdx = hashMap.get(secondName);
-
-                union(firstIdx, secondIdx);
-
-                System.out.println(countChild[find(firstIdx)]);
+                union(first, second);
+                String parent = find(first);
+                String mom = network.get(parent);
+                System.out.println(size.get(mom));
             }
         }
-
-
     }
 
-    public static int find(int x) {
-        if (parent[x] != x) {
-            parent[x] = find(parent[x]);
+    public static String find(String name) {
+        if (name.equals(network.get(name))) {
+            return name;
         }
-
-        return parent[x];
+        String root = find(network.get(name));
+        network.put(name,root);
+        return root;
     }
 
-    public static void union(int x, int y) {
-        int parentX = find(x);
-        int parentY = find(y);
+    public static void union(String name1, String name2) {
+        name1 = find(name1);
+        name2 = find(name2);
 
-        if (parentX != parentY) {
-            parent[parentY] = parentX;
-            countChild[parentX] += countChild[parentY];
+        if (!name1.equals(name2)) {
+            network.put(name2,name1);
+            size.put(name1, size.get(name1) + size.get(name2));
         }
     }
-
 }
