@@ -1,30 +1,27 @@
+import java.util.*;
+
 class Solution {
-        public static int cnt;
-    public static boolean[] checked;
-    public static String[] arr = {"A","E","I","O","U"};
-    public static String answerStr = "";
+    public List<String> list = new ArrayList<>();
+    public String[] alphabet = {"A","E","I","O","U"};
     public int solution(String word) {
-        return comb(0,word);
+        int answer = 0;
+        dfs("");
+        
+        return list.indexOf(word)+1;
     }
-
-    public static int comb(int depth,String word) {
-        if (word.equals(answerStr)) {
-            return cnt;
+    
+    public void dfs(String str){
+        
+        if(!str.equals("")){
+            list.add(str);
         }
-        if (depth == 5) {
-            return -1;
+        
+        if(str.length()==5){
+            return;
         }
-
-        for (int i = 0; i < 5; i++) {
-            answerStr += arr[i];
-            cnt++;
-            int result = comb(depth + 1,word);
-            if (result != -1) { // 찾은 경우 즉시 반환
-                return result;
-            }
-            answerStr = answerStr.substring(0, answerStr.length() - 1);
+        
+        for(int i=0; i<5; i++){
+            dfs(str+alphabet[i]);
         }
-
-        return -1;
     }
 }
